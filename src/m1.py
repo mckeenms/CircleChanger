@@ -12,6 +12,7 @@ import random
 import sys
 import time
 import m1t_test_CircleChanger as m1_tests
+import math
 
 ########################################################################
 # IMPORTANT:
@@ -106,6 +107,8 @@ class CircleChanger(object):
         self.circle = rg.Circle(self.center, self.radius)
         self.colors = colors
         self.circle.fill_color = fill_color
+        self.original_fill_color = fill_color
+        self.color_index = -1
 
 
 
@@ -247,8 +250,18 @@ class CircleChanger(object):
         Type hints:
             :type amount_to_swell_or_shrink: int
         """
+        change = amount_to_swell_or_shrink
+        if self.circle.radius + change >= 1:
+            self.circle.radius = self.circle.radius + change
+        else:
+            self.circle.radius = 1
+        rand = random.randrange(3, 16)
+        randindex = random.randrange(0, len(self.colors))
+        randcolor = self.colors[randindex]
+        self.circle.outline_thickness = rand
+        self.circle.fill_color = randcolor
         ################################################################
-        # TODO: 4.
+        # DONE: 4.
         #   First, READ the doc-string (specification) above.
         #   Second, READ the   run_test_swell_or_shrink_once   function
         #   (below).  Third, implement and test this method.
@@ -276,17 +289,6 @@ class CircleChanger(object):
         #   Simply   ** ASK FOR HELP **
         #            if this does not make sense to you.
         ################################################################
-        self.circle.radius = self.circle.radius + amount_to_swell_or_shrink
-
-        if self.circle.radius < 1:
-            self.circle.radius = 1
-
-        outline = random.randrange(3, 16)
-        self.circle.outline_thickness = outline
-
-        r_index = random.randrange(3, len(self.colors))
-        self.circle.fill_color = self.colors[r_index]
-
 
 
     def swell_or_shrink_repeatedly(self,
@@ -341,8 +343,13 @@ class CircleChanger(object):
             :type amount_to_swell_or_shrink: int
             :type times_to_swell_or_shrink:  int
         """
+        for k in range(times_to_swell_or_shrink):
+            self.swell_or_shrink_once(amount_to_swell_or_shrink)
+            self.draw()
+            self.swell_or_shrink_once(amount_to_swell_or_shrink)
+            self.draw()
         ################################################################
-        # TODO: 5.
+        # DONE: 5.
         #   First, READ the doc-string (specification) above.
         #   Second, READ the  run_test_swell_or_shrink_repeatedly  function
         #   (below).  Third, implement and test this method.
@@ -373,8 +380,17 @@ class CircleChanger(object):
             :type other_circle_changer: CircleChanger
             :rtype CircleChanger
         """
+        radius = (self.get_distance_from(other_circle_changer.circle.center)) / 2
+        dx = other_circle_changer.circle.center.x - self.circle.center.x
+        dy = other_circle_changer.circle.center.y - self.circle.center.y
+        x = self.circle.center.x + dx / 2
+        y = self.circle.center.y + dy / 2
+        color = self.colors + other_circle_changer.colors
+        circlechanger =CircleChanger(x, y, radius, 'red', color)
+        return circlechanger
+
         ################################################################
-        # TODO: 6.
+        # DONE: 6.
         #   First, READ the doc-string (specification) above.
         #   Second, READ the   run_test_swallow   function (below).
         #   Third, implement and test this method.
@@ -404,8 +420,9 @@ class CircleChanger(object):
         Type hints:
             :type index_of_color: int
         """
+        self.circle.fill_color = self.colors[index_of_color]
         ################################################################
-        # TODO: 7.
+        # DONE: 7.
         #   First, READ the doc-string (specification) above.
         #   Second, READ the   run_test_change_color   function (below).
         #   Third, implement and test this method.
@@ -421,8 +438,9 @@ class CircleChanger(object):
                the same color that it was when this CircleChanger
                was constructed.
         """
+        self.circle.fill_color = self.original_fill_color
         ################################################################
-        # TODO: 8.
+        # DONE: 8.
         #   First, READ the doc-string (specification) above.
         #   Second, READ the   run_test_change_to_original_color   function
         #   (below).  Third, implement and test this method.
@@ -460,8 +478,13 @@ class CircleChanger(object):
         Note: Other methods that affect this CircleChanger's circle's
         fill color have no effect on or interaction with this method.
         """
+        if self.color_index == len(self.colors) - 1:
+            self.color_index = 0
+        else:
+            self.color_index = self.color_index + 1
+        self.circle.fill_color = self.colors[self.color_index]
         ################################################################
-        # TODO: 9.
+        # DONE: 9.
         #   First, READ the doc-string (specification) above.
         #   Second, READ the   run_test_change_to_next_color_in_tuple
         #   function (below).  Third, implement and test this method.
